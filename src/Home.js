@@ -10,6 +10,9 @@ function Home() {
     inquiry: '',
   });
 
+  // State to manage form submission status
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+
   // Handle form data change
   const handleChange = (e) => {
     setFormData({
@@ -21,7 +24,7 @@ function Home() {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     // Send email to the business (you)
     emailjs
       .sendForm(
@@ -38,7 +41,7 @@ function Home() {
           console.error('Error sending email to business:', error);
         }
       );
-  
+
     // Send confirmation email to the user
     emailjs
       .sendForm(
@@ -49,14 +52,8 @@ function Home() {
       )
       .then(
         (result) => {
-          alert('Appointment request sent successfully, and confirmation email sent to user!');
-          setFormData({
-            fullName: '',
-            email: '',
-            phoneNumber: '',
-            inquiry: '',
-          });  // Clear form data after submission
           console.log('Confirmation email sent:', result);
+          setIsFormSubmitted(true);  // Change the state to indicate form submission
         },
         (error) => {
           alert('Error sending appointment request or confirmation email.');
@@ -64,7 +61,6 @@ function Home() {
         }
       );
   };
-  
 
   return (
     <div className="home">
@@ -90,55 +86,64 @@ function Home() {
           <h2>We Repair Your Appliances Fast & Efficiently</h2>
           <p>Same-day services available, we are customer-focused solutions</p>
         </div>
-        <div className="quote-form">
-          <h3>Request Appointment</h3>
-          <h4>We will get back to you in 20 minutes</h4>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              placeholder="Full Name"
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email Address"
-              required
-            />
-            <input
-              type="tel"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              placeholder="Phone Number"
-              required
-            />
-            <select
-              name="inquiry"
-              value={formData.inquiry}
-              onChange={handleChange}
-              required
-            >
-              <option value="" disabled selected>
-                What is your inquiry about?
-              </option>
-              <option value="refrigerator">Refrigerator Repair</option>
-              <option value="washing-machine">Washing Machine Repair</option>
-              <option value="dishwasher">Dishwasher Repair</option>
-              <option value="oven">Oven Repair</option>
-            </select>
-            <button type="submit">Submit Request</button>
-          </form>
-        </div>
+        
+        {/* Conditionally render the form or success message */}
+        {!isFormSubmitted ? (
+          <div className="quote-form">
+            <h3>Request Appointment</h3>
+            <h4>We will get back to you in 20 minutes</h4>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="Full Name"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email Address"
+                required
+              />
+              <input
+                type="tel"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                placeholder="Phone Number"
+                required
+              />
+              <select
+                name="inquiry"
+                value={formData.inquiry}
+                onChange={handleChange}
+                required
+              >
+                <option value="" disabled selected>
+                  What is your inquiry about?
+                </option>
+                <option value="refrigerator">Refrigerator Repair</option>
+                <option value="washing-machine">Washing Machine Repair</option>
+                <option value="dishwasher">Dishwasher Repair</option>
+                <option value="oven">Oven Repair</option>
+              </select>
+              <button type="submit">Submit Request</button>
+            </form>
+          </div>
+        ) : (
+          <div className="success-message">
+            <h3>Thank you! Your Request Sent Successfully!</h3>
+            <p>We will call you shortly!</p>
+          </div>
+        )}
       </section>
 
       {/* About Us Section */}
-      <section id="about" className="about-us">
+      <section id="about" className="contact">
         <h2>About Us</h2>
         <p>With over 15 years of experience in appliance repair, we provide fast, reliable, and affordable services to keep your home running smoothly</p>
       </section>
